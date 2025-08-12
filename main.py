@@ -8,32 +8,64 @@ _DATASET_PATH = _CONFIG['dataset_full_path']
 _SAVE_FOLDER_PATH = _CONFIG['save_folder_full_path']
 
 from prep_dataset import get_dataloaders
-from torchvision import models
 import torch.optim as optim
 import torch.nn as nn
 from raug.train import fit_model
 from raug.eval import test_model
-from resnet import MyResnet
 import os
+from sacred import Experiment
+import pandas as pd
+import time
+from models.models import set_model
 
-train_dataloader, test_dataloader, val_dataloader = get_dataloaders(_DATASET_PATH)
+ex = Experiment()
 
-resnet = models.resnet50()
+@ex.config
+def my_config():
+    _model = 'resnet'
+    _epochs = 30
+    _epochs_early_stop = 5
+    _optimizer = 'adam'
+    _lr_init = 0.0001
 
-model = MyResnet(resnet, 2)
+@ex.automain
+def main(_model, _epochs, _epochs_early_stop, _optimizer, _lr_init):
+    
+	dir_ex = f"{_model}_{str(time.time()).replace('.', '')}"
+	os.mkdir(_SAVE_FOLDER_PATH + '/' + dir_ex)
+	_save_folder = os.path.join(_SAVE_FOLDER_PATH, dir_ex)
 
-loss_fn = nn.CrossEntropyLoss()
-optimizer = optim.Adam(model.parameters(), lr=0.001)
+	train_dataloader_list, test_dataloader, val_dataloader_list = get_dataloaders(_DATASET_PATH)
 
-fit_model(model, train_dataloader, val_dataloader, optimizer=optimizer, loss_fn=loss_fn, epochs=30, epochs_early_stop=5,
-        save_folder=_SAVE_FOLDER_PATH, initial_model=None, device=None, config_bot=None, model_name="CNN", resume_train=False,
-        history_plot=True, val_metrics=["balanced_accuracy"])
+	loss_fn = nn.CrossEntropyLoss()
 
-_metric_options = {
-        'save_all_path': os.path.join(_SAVE_FOLDER_PATH, "test_pred"),
-        'pred_name_scores': 'predictions.csv',
-}
+	_class_names = ['boa', 'ruim']
 
-_class_names = ['boa', 'ruim']
+	_metric_options = {
+		'save_all_path': os.path.join(_save_folder, "test_pred"),
+		'pred_name_scores': 'predictions.csv',
+	}
 
-test_model(model=model, data_loader=test_dataloader, class_names=_class_names, metrics_options=_metric_options, metrics_to_comp='all', save_pred=True)
+	for i, (train_dataloader), in enumerate(train_dataloader_list):
+
+		model = set_model(_model)
+            
+		if _optimizer == 'adam':
+			optimizer = optim.Adam(model.parameters(), lr=_lr_init)
+		else:
+			optimizer = optim.SGD(model.parameters(), lr=_lr_init)
+
+		_save_folder_k = os.path.join(_save_folder, f"folder_{i+1}")
+
+		_metric_options = {
+			'save_all_path': os.path.join(_save_folder_k, "test_pred"),
+			'pred_name_scores': 'predictions.csv',
+		}
+
+		print(f"\n\n------------- STARTING TRAIN FOLDER {i+1}---------------\n\n")
+
+		fit_model(model, train_dataloader, val_dataloader_list[i], optimizer=optimizer, loss_fn=loss_fn, epochs=_epochs, epochs_early_stop=_epochs_early_stop,
+				save_folder=_save_folder_k, initial_model=None, device=None, config_bot=None, model_name="CNN", resume_train=False,
+				history_plot=True, val_metrics=["balanced_accuracy"])
+
+		test_model(model=model, data_loader=test_dataloader, class_names=_class_names, metrics_options=_metric_options, metrics_to_comp='all', save_pred=True)
