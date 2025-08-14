@@ -35,22 +35,20 @@ def get_dataloaders(dataset_path):
 
     imgs_paths, labels = _get_paths_and_labels(dataset_path, labels_name)
 
-    temp_imgs_paths, test_imgs_paths, temp_labels, test_labels = train_test_split(imgs_paths, labels, test_size=0.2, random_state=10, shuffle=True)
-
     skf = StratifiedKFold(n_splits=5, shuffle=True, random_state=10)
 
     train_dataloader_list = []
     val_dataloader_list = []
 
-    temp_imgs_paths = np.array(temp_imgs_paths)
-    temp_labels = np.array(temp_labels)
+    imgs_paths = np.array(imgs_paths)
+    labels = np.array(labels)
 
     eval_transform = ImgEvalTransform()
 
-    for i, (train_index, val_index) in enumerate(skf.split(temp_imgs_paths, temp_labels)):
+    for i, (train_index, val_index) in enumerate(skf.split(imgs_paths, labels)):
 
-        train_imgs_paths, val_imgs_paths = temp_imgs_paths[train_index], temp_imgs_paths[val_index]
-        train_labels, val_labels = temp_labels[train_index], temp_labels[val_index]
+        train_imgs_paths, val_imgs_paths = imgs_paths[train_index], imgs_paths[val_index]
+        train_labels, val_labels = labels[train_index], labels[val_index]
 
         train_dataloader = get_data_loader(train_imgs_paths, train_labels, transform=eval_transform)
         val_dataloader = get_data_loader(val_imgs_paths, val_labels, transform=eval_transform)
@@ -62,9 +60,5 @@ def get_dataloaders(dataset_path):
         print(f'Train: {len(train_imgs_paths)}, {len(train_labels)}')
         print(f'Validacao: {len(val_imgs_paths)}, {len(val_labels)}')
 
-    print(f'Teste: {len(test_imgs_paths)}, {len(test_labels)}')
-
-    test_dataloader = get_data_loader(test_imgs_paths, test_labels, transform=eval_transform)
-
-    return train_dataloader_list, test_dataloader, val_dataloader_list
+    return train_dataloader_list, val_dataloader_list
 

@@ -8,6 +8,7 @@ _DATASET_PATH = _CONFIG['dataset_full_path']
 _SAVE_FOLDER_PATH = _CONFIG['save_folder_full_path']
 
 from prep_dataset import get_dataloaders
+import torch
 import torch.optim as optim
 import torch.nn as nn
 from raug.train import fit_model
@@ -24,9 +25,9 @@ ex = Experiment()
 def my_config():
     _model = 'resnet'
     _epochs = 30
-    _epochs_early_stop = 5
+    _epochs_early_stop = 10
     _optimizer = 'adam'
-    _lr_init = 0.0001
+    _lr_init = 0.00001
 
 @ex.automain
 def main(_model, _epochs, _epochs_early_stop, _optimizer, _lr_init):
@@ -35,9 +36,10 @@ def main(_model, _epochs, _epochs_early_stop, _optimizer, _lr_init):
 	os.mkdir(_SAVE_FOLDER_PATH + '/' + dir_ex)
 	_save_folder = os.path.join(_SAVE_FOLDER_PATH, dir_ex)
 
-	train_dataloader_list, test_dataloader, val_dataloader_list = get_dataloaders(_DATASET_PATH)
+	train_dataloader_list, val_dataloader_list = get_dataloaders(_DATASET_PATH)
 
 	loss_fn = nn.CrossEntropyLoss()
+	# weight=torch.tensor([2, 1])
 
 	_class_names = ['boa', 'ruim']
 
@@ -68,4 +70,4 @@ def main(_model, _epochs, _epochs_early_stop, _optimizer, _lr_init):
 				save_folder=_save_folder_k, initial_model=None, device=None, config_bot=None, model_name="CNN", resume_train=False,
 				history_plot=True, val_metrics=["balanced_accuracy"])
 
-		test_model(model=model, data_loader=test_dataloader, class_names=_class_names, metrics_options=_metric_options, metrics_to_comp='all', save_pred=True)
+		test_model(model=model, data_loader=val_dataloader_list[i], class_names=_class_names, metrics_options=_metric_options, metrics_to_comp='all', save_pred=True)
