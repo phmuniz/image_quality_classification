@@ -1,12 +1,12 @@
 from torch import nn
 
-class MyResnet (nn.Module):
+class MyMobilenet (nn.Module):
 
-    def __init__(self, resnet, num_class, neurons_reducer_block=256, freeze_conv=False, p_dropout=0.5, n_feat_conv=2048):
+    def __init__(self, mobilenet, num_class, neurons_reducer_block=256, freeze_conv=False, p_dropout=0.5, n_feat_conv=1280):
 
-        super(MyResnet, self).__init__()
+        super(MyMobilenet, self).__init__()
 
-        self.features = nn.Sequential(*list(resnet.children())[:-1])
+        self.features = nn.Sequential(*list(mobilenet.children())[:-1])
 
         # freezing the convolution layers
         if freeze_conv:
@@ -30,12 +30,11 @@ class MyResnet (nn.Module):
         else:
             self.classifier = nn.Linear(n_feat_conv, num_class)
 
-
     def forward(self, img):
 
         x = self.features(img)
+        x = x.mean([2, 3])
 
-        
         x = x.view(x.size(0), -1) # flatting
         if self.reducer_block is not None:
             x = self.reducer_block(x)  # feat reducer block
