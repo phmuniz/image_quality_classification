@@ -1,6 +1,10 @@
-# Avaliação da Qualidade de Imagens de Lesões de Pele 🖼️
+# Avaliação da Qualidade de Imagens de Lesões de Pele 🔎🖼️
 
 Olá, sejam bem-vindos ao repositório! O trabalho desenvolvido é referente à classificação da qualidade de imagens de lesões de pele utilizando técnicas de aprendizado de máquina. Essa avaliação é muito importante para a montagem de um bom dataset visando o treinamento de modelos para classificação das lesões. A seguir, vocês verão todas as instruções necessárias para utilizar o repositório.
+
+<div align="center">
+  <img src="./assets/example.png" alt="Example" height=500/>
+</div>
 
 ## 📒 Dataset
 O classificador vai avaliar a qualidade da imagem em duas classes: boa ou ruim. Para avaliar as imagens é necessário ter um dataset com a seguinte estrutura de pastas:
