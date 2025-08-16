@@ -25,8 +25,14 @@ def _get_paths_and_labels(path, lab_names):
         
     return imgs_path, labels
 
-def get_dataloaders(dataset_path):
+def get_dataloaders(dataset_path, num_folders=5, batch_size=30):
 
+    """
+    :param dataset_path (string): caminho para a pasta que contém o dataset.
+    :param num_folder (int): número de folders para validação cruzada. Default 5.
+    :param batch_size (int): batch size para o dataset. Default 30.
+    :return (tuple): uma tupla contendo a lista de dataloaders do treino, a lista de dataloaders da validação e o nome dos labels.
+    """
 
     labels_name = glob(os.path.join(dataset_path, "*"))
     labels_name = [l.split(os.path.sep)[-1] for l in labels_name]
@@ -35,7 +41,7 @@ def get_dataloaders(dataset_path):
 
     imgs_paths, labels = _get_paths_and_labels(dataset_path, labels_name)
 
-    skf = StratifiedKFold(n_splits=5, shuffle=True, random_state=10)
+    skf = StratifiedKFold(n_splits=num_folders, shuffle=True, random_state=10)
 
     train_dataloader_list = []
     val_dataloader_list = []
@@ -51,8 +57,8 @@ def get_dataloaders(dataset_path):
         train_imgs_paths, val_imgs_paths = imgs_paths[train_index], imgs_paths[val_index]
         train_labels, val_labels = labels[train_index], labels[val_index]
 
-        train_dataloader = get_data_loader(train_imgs_paths, train_labels, transform=train_transform)
-        val_dataloader = get_data_loader(val_imgs_paths, val_labels, transform=eval_transform)
+        train_dataloader = get_data_loader(train_imgs_paths, train_labels, transform=train_transform, batch_size=batch_size)
+        val_dataloader = get_data_loader(val_imgs_paths, val_labels, transform=eval_transform, batch_size=batch_size)
 
         train_dataloader_list.append(train_dataloader)
         val_dataloader_list.append(val_dataloader)

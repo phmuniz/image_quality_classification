@@ -5,6 +5,14 @@ import numpy as np
 
 def agg_metrics_all_folders(ex_path, num_folders):
 
+    """
+    Esta função agrega as métricas de todas as folders de determinado experimento. Salva os resultados agregados no
+    caminho passado como parâmetro.
+
+    :param ex_path(string): caminho para a pasta onde estão salvos os resultados dos experimentos.
+    :param num_folders(int): número de folders utilizado na validação cruzada.
+    """
+
     acc, precision, recall, f1 = [], [], [], []
 
     for folder in range(num_folders):

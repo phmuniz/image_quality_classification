@@ -22,20 +22,22 @@ ex = Experiment()
 
 @ex.config
 def my_config():
-    _model = 'resnet'
-    _epochs = 30
-    _epochs_early_stop = 7
-    _optimizer = 'adam'
-    _lr_init = 0.00001
+	_model = 'resnet' # 'resnet' ou 'mobilenet' ou 'vggnet'
+	_epochs = 30
+	_epochs_early_stop = 7
+	_optimizer = 'adam' # 'adam' ou 'sgd'
+	_lr_init = 0.00001
+	_num_folders = 5
+	_batch_size = 30
 
 @ex.automain
-def main(_model, _epochs, _epochs_early_stop, _optimizer, _lr_init):
+def main(_model, _epochs, _epochs_early_stop, _optimizer, _lr_init, _num_folders, _batch_size):
     
 	dir_ex = f"{_model}_{str(time.time()).replace('.', '')}"
 	os.mkdir(_SAVE_FOLDER_PATH + '/' + dir_ex)
 	_save_folder = os.path.join(_SAVE_FOLDER_PATH, dir_ex)
 
-	train_dataloader_list, val_dataloader_list, _class_names = get_dataloaders(_DATASET_PATH)
+	train_dataloader_list, val_dataloader_list, _class_names = get_dataloaders(_DATASET_PATH, num_folders=_num_folders, batch_size=_batch_size)
 
 	loss_fn = nn.CrossEntropyLoss()
 	# weight=torch.tensor([2, 1])
@@ -73,4 +75,4 @@ def main(_model, _epochs, _epochs_early_stop, _optimizer, _lr_init):
 
 
 
-	agg_metrics_all_folders(ex_path=_save_folder, num_folders=5)
+	agg_metrics_all_folders(ex_path=_save_folder, num_folders=_num_folders)
