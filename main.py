@@ -7,7 +7,7 @@ sys.path.insert(0,_CONFIG['raug_full_path'])
 _DATASET_PATH = _CONFIG['dataset_full_path']
 _SAVE_FOLDER_PATH = _CONFIG['save_folder_full_path']
 
-from prep_dataset import get_dataloaders
+from preprocess.prep_dataset import get_dataloaders
 import torch.optim as optim
 import torch.nn as nn
 from raug.train import fit_model
@@ -16,7 +16,7 @@ import os
 from sacred import Experiment
 import time
 from models.models import set_model
-from agg_metrics import agg_metrics_all_folders
+from posprocess.agg_metrics import agg_metrics_all_folders
 
 ex = Experiment()
 
@@ -75,4 +75,4 @@ def main(_model, _epochs, _epochs_early_stop, _optimizer, _lr_init, _num_folders
 
 
 
-	agg_metrics_all_folders(ex_path=_save_folder, num_folders=_num_folders)
+	agg_metrics_all_folders(ex_path=_save_folder, num_folders=_num_folders, class_names=_class_names)
