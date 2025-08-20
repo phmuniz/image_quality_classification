@@ -44,3 +44,6 @@ Todos os possíveis parâmetros e seus valores estão descritos em `main.py`.
 
 ## 📈 Resultados e avaliação dos experimentos
 Para cada experimento realizado é criada uma pasta na raiz do diretório `"save_folder_full_path"`, indicado no `config.json`. Dentro da pasta, são exibidos resultados para cada folder da validação cruzada, além das métricas agregadas. São salvos gráficos, curvas, métricas e logs de cada experimento.
+
+## 🖌️ Geração de imagens deterioradas
+Também é disponibilizado um notebook com um pipeline para geração de imagens deterioradas, com a aplicação de blur, em [image_process](./posprocess/image_process.ipynb). Todas as orientações para utilização estão descritas no notebook.
