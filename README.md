@@ -47,3 +47,15 @@ Para cada experimento realizado é criada uma pasta na raiz do diretório `"save
 
 ## 🖌️ Geração de imagens deterioradas
 Também é disponibilizado um notebook com um pipeline para geração de imagens deterioradas, com a aplicação de blur, em [image_process](./preprocess/image_process.ipynb). Todas as orientações para utilização estão descritas no notebook.
+
+## 📝 Dependências
+Você pode instalar todas as dependências necessárias para o projeto utilizando o seguinte comando no terminal:
+
+```bash
+pip install -r requirements.txt
+```
+
+Porém, é recomendada a utilização de um ambiente virtual python. Indica-se o [Gandalf](https://github.com/life-ufes/gandalf).
+
+## 📃🎥 Artigo e vídeo explicativo
+Para este trabalho foi desenvolvido um [artigo](https://drive.google.com/file/d/1_18JsGGG9u6c_afRsx38Zpk_Aityq314/view) e um [vídeo explicativo](https://drive.google.com/file/d/164Njdr-yuwjDOdyiJNvuPK0WAmtMnepi/view). Confira!
